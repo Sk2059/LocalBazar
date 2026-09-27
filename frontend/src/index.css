@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* Tailwind CSS v4 directive; supported by Tailwind's PostCSS processor. */
+/* csslint ignore:start */
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  --color-forest-50: #f1f7ef;
+  --color-forest-100: #e4f0e1;
+  --color-forest-200: #c9e1c4;
+  --color-forest-300: #a5c99d;
+  --color-forest-400: #76aa6c;
+  --color-forest-500: #4a8c3f;
+  --color-forest-600: #3b7433;
+  --color-forest-700: #2d5a27;
+  --color-forest-800: #244a20;
+  --color-forest-900: #1c3819;
+
+  --color-harvest-50: #fdf9ed;
+  --color-harvest-100: #f8efd9;
+  --color-harvest-200: #f0dfb3;
+  --color-harvest-300: #e5c982;
+  --color-harvest-400: #d8ae4b;
+  --color-harvest-500: #c8941a;
+  --color-harvest-600: #aa7912;
+  --color-harvest-700: #895e0e;
+  --color-harvest-800: #704b0e;
+  --color-harvest-900: #5d3d0d;
+
+  --color-cream: #faf7f2;
+  --color-ink: #1c2b19;
+  --color-muted: #71806d;
+}
+/* csslint ignore:end */
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: #faf7f2;
+    color: #1c2b19;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  ::selection {
+    background: #2d5a27;
+    color: white;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

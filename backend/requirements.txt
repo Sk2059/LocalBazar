@@ -1,0 +1,10 @@
+Django>=5.2,<6.0
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+psycopg[binary]
+python-dotenv
+drf-spectacular
+Pillow
+# requests  # only needed once KhaltiService calls the real Khalti gateway
+django-filter
