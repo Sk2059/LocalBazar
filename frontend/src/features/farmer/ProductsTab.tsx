@@ -164,7 +164,7 @@ function ProductCard({
   return (
     <>
       <article className="flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:shadow-md">
-        <div className="relative aspect-[4/3] w-full bg-stone-100">
+        <div className="relative aspect-4/3 w-full bg-stone-100">
           {product.image ? (
             <img
               src={product.image}

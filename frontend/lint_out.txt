@@ -1,0 +1,460 @@
+﻿
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\auth\SignupPage.tsx
+  146:20  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\auth\SignupPage.tsx:146:20
+  144 |   });
+  145 |
+> 146 |   const password = watch("password", "");
+      |                    ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  147 |
+  148 |   const strength = useMemo(
+  149 |     () => passwordScore(password),  react-hooks/incompatible-library
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\buyer\checkout\CheckoutPage.tsx
+  192:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\buyer\checkout\CheckoutPage.tsx:192:19
+  190 |   }, [user?.phone, getValues, setValue]);
+  191 |
+> 192 |   const watched = watch();
+      |                   ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  193 |
+  194 |   // Advisory only: shows what the server charges for a matching zone so the
+  195 |   // fee isn't a surprise. Unknown locations are never guessed  react-hooks/incompatible-library
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx
+  258:14  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:258:14
+  256 |           <nav className="flex-1 overflow-y-auto px-4 py-6">
+  257 |
+> 258 |             <SidebarLabel>
+      |              ^^^^^^^^^^^^ This component is created during render
+  259 |               Overview
+  260 |             </SidebarLabel>
+  261 |
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:116:1
+  114 | ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+  115 |
+> 116 | function SidebarLabel({
+      | ^^^^^^^^^^^^^^^^^^^^^^^
+> 117 |   children,
+      | ^^^^^^^^^^^
+> 118 | }: {
+      ΓÇª
+      | ^^^^^^^^^^^
+> 125 |   );
+      | ^^^^^^^^^^^
+> 126 | }
+      | ^^ The component is created during render here
+  127 |
+  128 | function SidebarItem({
+  129 |   icon: Icon,                         react-hooks/static-components
+  262:14  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:262:14
+  260 |             </SidebarLabel>
+  261 |
+> 262 |             <SidebarItem
+      |              ^^^^^^^^^^^ This component is created during render
+  263 |               icon={LayoutDashboard}
+  264 |               label="Dashboard"
+  265 |               active={section === "dashboard"}
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION     react-hooks/static-components
+  272:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:272:16
+  270 |
+  271 |             <div className="mt-7">
+> 272 |               <SidebarLabel>
+      |                ^^^^^^^^^^^^ This component is created during render
+  273 |                 Sell
+  274 |               </SidebarLabel>
+  275 |
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:116:1
+  114 | ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+  115 |
+> 116 | function SidebarLabel({
+      | ^^^^^^^^^^^^^^^^^^^^^^^
+> 117 |   children,
+      | ^^^^^^^^^^^
+> 118 | }: {
+      ΓÇª
+      | ^^^^^^^^^^^
+> 125 |   );
+      | ^^^^^^^^^^^
+> 126 | }
+      | ^^ The component is created during render here
+  127 |
+  128 | function SidebarItem({
+  129 |   icon: Icon,                                               react-hooks/static-components
+  276:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:276:16
+  274 |               </SidebarLabel>
+  275 |
+> 276 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  277 |                 icon={Sprout}
+  278 |                 label="Products"
+  279 |                 badge={productsCount}
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION              react-hooks/static-components
+  286:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:286:16
+  284 |               />
+  285 |
+> 286 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  287 |                 icon={Package}
+  288 |                 label="Orders to fulfil"
+  289 |                 badge={fulfilmentPending}
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION              react-hooks/static-components
+  296:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:296:16
+  294 |               />
+  295 |
+> 296 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  297 |                 icon={Plus}
+  298 |                 label="Add product"
+  299 |                 onClick={() =>
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION                                 react-hooks/static-components
+  306:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:306:16
+  304 |
+  305 |             <div className="mt-7">
+> 306 |               <SidebarLabel>
+      |                ^^^^^^^^^^^^ This component is created during render
+  307 |                 Buy
+  308 |               </SidebarLabel>
+  309 |
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:116:1
+  114 | ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+  115 |
+> 116 | function SidebarLabel({
+      | ^^^^^^^^^^^^^^^^^^^^^^^
+> 117 |   children,
+      | ^^^^^^^^^^^
+> 118 | }: {
+      ΓÇª
+      | ^^^^^^^^^^^
+> 125 |   );
+      | ^^^^^^^^^^^
+> 126 | }
+      | ^^ The component is created during render here
+  127 |
+  128 | function SidebarItem({
+  129 |   icon: Icon,                                                react-hooks/static-components
+  310:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:310:16
+  308 |               </SidebarLabel>
+  309 |
+> 310 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  311 |                 icon={Store}
+  312 |                 label="Marketplace"
+  313 |                 onClick={() =>
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION                   react-hooks/static-components
+  318:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:318:16
+  316 |               />
+  317 |
+> 318 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  319 |                 icon={ShoppingBag}
+  320 |                 label="My purchases"
+  321 |                 badge={myOrders?.length ?? 0}
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION          react-hooks/static-components
+  328:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:328:16
+  326 |               />
+  327 |
+> 328 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  329 |                 icon={ShoppingCart}
+  330 |                 label="Cart"
+  331 |                 onClick={() =>
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION                                react-hooks/static-components
+  338:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:338:16
+  336 |
+  337 |             <div className="mt-7">
+> 338 |               <SidebarLabel>
+      |                ^^^^^^^^^^^^ This component is created during render
+  339 |                 Account
+  340 |               </SidebarLabel>
+  341 |
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:116:1
+  114 | ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+  115 |
+> 116 | function SidebarLabel({
+      | ^^^^^^^^^^^^^^^^^^^^^^^
+> 117 |   children,
+      | ^^^^^^^^^^^
+> 118 | }: {
+      ΓÇª
+      | ^^^^^^^^^^^
+> 125 |   );
+      | ^^^^^^^^^^^
+> 126 | }
+      | ^^ The component is created during render here
+  127 |
+  128 | function SidebarItem({
+  129 |   icon: Icon,                                            react-hooks/static-components
+  342:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:342:16
+  340 |               </SidebarLabel>
+  341 |
+> 342 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  343 |                 icon={Store}
+  344 |                 label="Farm profile"
+  345 |                 active={section === "profile"}
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION  react-hooks/static-components
+  351:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:351:16
+  349 |               />
+  350 |
+> 351 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  352 |                 icon={
+  353 |                   profile?.verification_status ===
+  354 |                   "verified"
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION                         react-hooks/static-components
+  367:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:367:16
+  365 |               />
+  366 |
+> 367 |               <SidebarItem
+      |                ^^^^^^^^^^^ This component is created during render
+  368 |                 icon={Settings}
+  369 |                 label="Settings"
+  370 |                 onClick={() =>
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\FarmerDashboardPage.tsx:128:1
+  126 | }
+  127 |
+> 128 | function SidebarItem({
+      | ^^^^^^^^^^^^^^^^^^^^^^
+> 129 |   icon: Icon,
+      | ^^^^^^^^^^^^^
+> 130 |   label,
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 177 |   );
+      | ^^^^^^^^^^^^^
+> 178 | }
+      | ^^ The component is created during render here
+  179 |
+  180 |   /* ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  181 |      NAVIGATION                                react-hooks/static-components
+
+C:\Users\sk\Documents\farmer\local-farmers-marketplace\frontend\src\features\farmer\ProductsTab.tsx
+  27:9  warning  The 'products' logical expression could make the dependencies of useMemo Hook (at line 38) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'products' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+Γ£û 17 problems (14 errors, 3 warnings)
+
