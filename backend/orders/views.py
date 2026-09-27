@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Count, Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
@@ -152,6 +153,7 @@ class FarmerOrderItemFulfilView(GenericAPIView):
     queryset = OrderItem.objects.all()
     permission_classes = [IsAuthenticated, IsFarmerRole]
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         try:
             item = (

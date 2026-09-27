@@ -96,9 +96,23 @@ export function resolveApiError(error: unknown): ApiError {
   const message = firstMessage(data);
 
   if (status === 401) {
+    // The default Django REST Framework message for missing/invalid tokens is
+    // "Authentication credentials were not provided." — not actionable for a
+    // logged-in farmer/buyer. Always surface the sign-in prompt; include the
+    // server message as a subtle hint only when it carries non-default info.
+    const DEFAULT = "Your session may have expired. Please sign in again.";
+    const SERVER_HINTS = [
+      "Authentication credentials were not provided.",
+      "Given token not valid for any token type",
+      "Token is invalid or expired",
+      "User not found",
+    ];
+    const hasUsefulHint =
+      message && !SERVER_HINTS.some((hint) => message.includes(hint));
+
     return {
       code: "unauthorized",
-      message: message ?? "Your session has expired. Please sign in again.",
+      message: hasUsefulHint ? `${DEFAULT} (${message})` : DEFAULT,
     };
   }
 

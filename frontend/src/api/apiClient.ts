@@ -5,13 +5,19 @@ import {
 } from "./auth";
 
 /**
- * Paths that only make sense for a signed-in buyer. When the access token
+ * Paths that only make sense for a signed-in user. When the access token
  * expires mid-session, an API call from one of these pages returns 401: the
  * interceptor drops the stale token and sends the user to the login page with
  * a `next` parameter so they land back where they were. Public pages are left
  * untouched so an anonymous visitor never gets bounced.
  */
-const PROTECTED_PREFIXES = ["/checkout", "/orders", "/payment-verify"];
+const PROTECTED_PREFIXES = [
+  "/checkout",
+  "/orders",
+  "/payment-verify",
+  "/farmer",
+  "/admin",
+];
 
 function onProtectedPage(): boolean {
   const path = window.location.pathname;
