@@ -257,6 +257,29 @@ class AdminProductListView(ListAPIView):
             .select_related("category", "farmer", "farmer__farmer_profile")
         )
 
+
+class AdminProductDetailView(RetrieveUpdateDestroyAPIView):
+    """Read, feature, un-feature, hide or delete one product.
+
+    This is admin-only, so unlike the public detail view it also reaches
+    drafts — the console has to manage products the marketplace hides. The
+    console only ever patches the curation flags (`is_featured`, `is_active`),
+    so a partial update is used to avoid clobbering the farmer's own fields.
+    """
+
+    queryset = (
+        Product.objects
+        .select_related("category", "farmer", "farmer__farmer_profile")
+    )
+
+    serializer_class = ProductSerializer
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdmin,
+    ]
+
+
 class ProductDetailView(
     RetrieveUpdateDestroyAPIView
 ):

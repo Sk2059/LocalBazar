@@ -12,116 +12,9 @@ import { Link } from "react-router-dom";
 
 import Container from "../../../components/common/Container";
 
-// ============================================================
-// FARMER DATA
-// ============================================================
+import { useFarmers } from "./data/hooks";
 
-const farmersData = [
-  {
-    id: 1,
-    name: "Ramesh Kumar",
-    farmName: "Hari Organic Farm",
-    location: "Biratnagar, Morang",
-    image: "/images/farmers/ramesh.png",
-    farmImage: "/images/farmers/rameshfarm.png",
-    rating: 4.9,
-    reviews: 46,
-    products: 18,
-    farmingType: "Organic",
-    story:
-      "Growing fresh vegetables with traditional farming practices and care for the soil.",
-    joined: "2021",
-    verified: true,
-    categories: ["Vegetables", "Leafy Greens"],
-  },
-  {
-    id: 2,
-    name: "Mina Rai",
-    farmName: "Koshi Green Farm",
-    location: "Itahari, Sunsari",
-    image: "/images/farmers/mina.png",
-    farmImage: "/images/farmers/mina-farm.png",
-    rating: 4.8,
-    reviews: 38,
-    products: 14,
-    farmingType: "Natural",
-    story:
-      "A family-run farm focused on seasonal vegetables and sustainable local agriculture.",
-    joined: "2022",
-    verified: true,
-    categories: ["Vegetables", "Fruits"],
-  },
-  {
-    id: 3,
-    name: "Dilip Chaudhary",
-    farmName: "Green Valley Farm",
-    location: "Birat Chowk, Morang",
-    image: "/images/farmers/dilip.png",
-    farmImage: "/images/farmers/dilip-farm.png",
-    rating: 4.9,
-    reviews: 52,
-    products: 22,
-    farmingType: "Sustainable",
-    story:
-      "Providing naturally grown produce to families across the Koshi region.",
-    joined: "2020",
-    verified: true,
-    categories: ["Grains & Pulses", "Seasonal"],
-  },
-  {
-    id: 4,
-    name: "Sunita Thapa",
-    farmName: "Sunita's Garden",
-    location: "Dharan, Sunsari",
-    image: "/images/farmers/ramesh.png",
-    farmImage: "/images/farmers/rameshfarm.png",
-    rating: 4.7,
-    reviews: 29,
-    products: 11,
-    farmingType: "Organic",
-    story:
-      "Dedicated to growing pesticide-free produce for local families in Dharan.",
-    joined: "2023",
-    verified: false,
-    categories: ["Fruits", "Leafy Greens"],
-  },
-  {
-    id: 5,
-    name: "Bishnu Prasad",
-    farmName: "Madhesh Fruit Farm",
-    location: "Rajbiraj, Saptari",
-    image: "/images/farmers/dilip.png",
-    farmImage: "/images/farmers/dilip-farm.png",
-    rating: 4.6,
-    reviews: 33,
-    products: 16,
-    farmingType: "Natural",
-    story:
-      "Seasonal fruits and tropical produce direct from the Terai plains.",
-    joined: "2021",
-    verified: true,
-    categories: ["Fruits", "Seasonal"],
-  },
-  {
-    id: 6,
-    name: "Kamala Gurung",
-    farmName: "Hill Fresh Farm",
-    location: "Dhankuta, Koshi",
-    image: "/images/farmers/mina.png",
-    farmImage: "/images/farmers/mina-farm.png",
-    rating: 4.8,
-    reviews: 41,
-    products: 19,
-    farmingType: "Organic",
-    story:
-      "Hill-grown organic vegetables delivered fresh to the plains.",
-    joined: "2022",
-    verified: true,
-    categories: ["Vegetables", "Grains & Pulses"],
-  },
-];
-
-type Farmer = (typeof farmersData)[number];
+import type { Farmer } from "./data/adaptFarmer";
 
 // ============================================================
 // MAIN PAGE
@@ -131,24 +24,29 @@ export default function FarmersPage() {
   const [search, setSearch] = useState("");
   const [method, setMethod] = useState("All");
 
-  const methods = ["All", "Organic", "Natural", "Sustainable"];
+  const { data: farmers = [], isLoading, isError } = useFarmers();
+
+  const methods = ["All", "Organic", "Natural", "Conventional"];
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return farmersData.filter((farmer) => {
+    return farmers.filter((farmer) => {
       const matchesSearch =
         !query ||
         farmer.name.toLowerCase().includes(query) ||
         farmer.farmName.toLowerCase().includes(query) ||
         farmer.location.toLowerCase().includes(query);
 
+      // A farm can grow several ways, so it belongs under "Organic" if any of
+      // its listings are organic — not just the headline method on the card.
       const matchesMethod =
-        method === "All" || farmer.farmingType === method;
+        method === "All" ||
+        farmer.farmingMethods.includes(method.toLowerCase());
 
       return matchesSearch && matchesMethod;
     });
-  }, [search, method]);
+  }, [farmers, search, method]);
 
   const clearFilters = () => {
     setSearch("");
@@ -344,7 +242,11 @@ export default function FarmersPage() {
         )}
 
         {/* Cards */}
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <FarmersLoading />
+        ) : isError ? (
+          <FarmersError />
+        ) : filtered.length === 0 ? (
           <EmptyState onClear={clearFilters} />
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -443,10 +345,10 @@ function FarmerCard({ farmer }: { farmer: Farmer }) {
 
             <div className="px-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-forest-700/70">
-                Reviews
+                Orders
               </p>
               <p className="mt-0.5 text-sm font-extrabold text-[#173615]">
-                {farmer.reviews}
+                {farmer.orders}
               </p>
             </div>
           </div>
@@ -479,6 +381,54 @@ function FarmerCard({ farmer }: { farmer: Farmer }) {
         </div>
       </article>
     </Link>
+  );
+}
+
+// ============================================================
+// LOADING / ERROR
+// ============================================================
+
+function FarmersLoading() {
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div
+          key={index}
+          className="overflow-hidden rounded-3xl border border-[#F3F8F1] bg-[#FCFBF7] shadow-[0_8px_24px_rgba(23,54,21,0.07)]"
+        >
+          <div className="aspect-16/10 animate-pulse bg-[#EDF2EA]" />
+
+          <div className="px-5 pb-5">
+            <div className="size-16 -translate-y-8 rounded-2xl border-4 border-[#FCFBF7] bg-[#EDF2EA]" />
+
+            <div className="mt-2 h-4 w-1/2 animate-pulse rounded bg-[#EDF2EA]" />
+
+            <div className="mt-3 h-3 w-2/3 animate-pulse rounded bg-[#EDF2EA]" />
+
+            <div className="mt-5 h-14 animate-pulse rounded-2xl bg-[#EDF2EA]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FarmersError() {
+  return (
+    <div className="rounded-2xl border border-dashed border-[#CBD6C8] bg-white px-6 py-16 text-center">
+      <div className="mx-auto flex size-14 items-center justify-center rounded-xl bg-[#F3F8F1] text-forest-700">
+        <Search className="size-6" />
+      </div>
+
+      <h2 className="mt-4 font-display text-xl font-semibold text-[#173615]">
+        Couldn't load farmers
+      </h2>
+
+      <p className="mx-auto mt-1.5 max-w-sm text-xs leading-5 text-[#7A8575]">
+        Something went wrong reaching the farms. Please check your connection
+        and try again.
+      </p>
+    </div>
   );
 }
 

@@ -132,6 +132,42 @@ export interface AdminDeliveryZonePayload {
   is_active?: boolean;
 }
 
+/**
+ * `ProductSerializer` — the admin catalogue row. Unlike the public list this
+ * shape includes drafts and out-of-stock products, because the console has to
+ * curate rows the marketplace deliberately hides.
+ */
+export interface AdminProductApi {
+  id: number;
+  name: string;
+  slug: string;
+  category_name: string;
+  farmer_name: string;
+  farm_name: string;
+  price: string;
+  unit: string;
+  stock: number;
+  image: string | null;
+  is_seasonal: boolean;
+  is_featured: boolean;
+  is_active: boolean;
+  created_at: string;
+}
+
+/** The console only ever toggles the curation flags; the farmer owns the rest. */
+export interface AdminProductUpdatePayload {
+  is_featured?: boolean;
+  is_active?: boolean;
+}
+
+interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+
 export function getAdminStats(): Promise<AdminStatsApi> {
   return apiClient
     .get<AdminStatsApi>("/auth/admin/stats/")
@@ -195,6 +231,37 @@ export function updateOrderStatus(
   return apiClient
     .patch<OrderApi>(`/orders/admin/orders/${orderId}/status/`, payload)
     .then((response) => response.data);
+}
+
+// ── Products ─────────────────────────────────────────────────────────────────
+
+/**
+ * Every product in the catalogue, drafts and out-of-stock rows included. The
+ * endpoint is paginated (page_size tops out at 60 server-side), so the console
+ * asks for the maximum and renders one page — the catalogue is small enough
+ * that paged navigation isn't worth the state.
+ */
+export function getAdminProducts(): Promise<AdminProductApi[]> {
+  return apiClient
+    .get<PaginatedResponse<AdminProductApi>>("/products/admin/products/", {
+      params: { page_size: 60 },
+    })
+    .then((response) => response.data.results);
+}
+
+export function updateAdminProduct(
+  productId: number,
+  payload: AdminProductUpdatePayload,
+): Promise<AdminProductApi> {
+  return apiClient
+    .patch<AdminProductApi>(`/products/admin/products/${productId}/`, payload)
+    .then((response) => response.data);
+}
+
+export function deleteAdminProduct(productId: number): Promise<void> {
+  return apiClient
+    .delete(`/products/admin/products/${productId}/`)
+    .then(() => undefined);
 }
 
 // ── Categories ──────────────────────────────────────────────────────────────

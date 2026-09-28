@@ -284,3 +284,89 @@ class CatalogueScopeTests(ProductBase):
         names = {item["name"] for item in response.data["results"]}
         self.assertEqual(names, {"Published Pumpkin", "Draft Durian"})
 
+    def test_admin_can_feature_and_unfeature_a_product(self):
+        client = self.client_for(self.admin)
+
+        response = client.patch(
+            f"/api/v1/products/admin/products/{self.published.id}/",
+            {"is_featured": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["is_featured"])
+        self.published.refresh_from_db()
+        self.assertTrue(self.published.is_featured)
+
+        # Toggling back off is the same one-call round trip.
+        response = client.patch(
+            f"/api/v1/products/admin/products/{self.published.id}/",
+            {"is_featured": False},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.published.refresh_from_db()
+        self.assertFalse(self.published.is_featured)
+
+    def test_admin_can_feature_a_draft(self):
+        # The homepage rail only shows active rows, but the console has to be
+        # able to pre-feature a draft so it lands on the rail the moment it goes
+        # live — the public detail endpoint would serve it either way, but the
+        # admin route is what the console calls.
+        client = self.client_for(self.admin)
+
+        response = client.patch(
+            f"/api/v1/products/admin/products/{self.draft.id}/",
+            {"is_featured": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.draft.refresh_from_db()
+        self.assertTrue(self.draft.is_featured)
+
+    def test_farmer_cannot_use_the_admin_product_endpoint(self):
+        client = self.client_for(self.farmer)
+
+        response = client.patch(
+            f"/api/v1/products/admin/products/{self.published.id}/",
+            {"is_featured": True},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.published.refresh_from_db()
+        self.assertFalse(self.published.is_featured)
+
+    def test_admin_can_delete_a_product(self):
+        client = self.client_for(self.admin)
+
+        response = client.delete(
+            f"/api/v1/products/admin/products/{self.draft.id}/"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Product.objects.filter(pk=self.draft.id).exists())
+
+    def test_editing_a_product_keeps_its_featured_flag(self):
+        # Regression: the catalogue form rebuilds the payload field by field and
+        # never includes `is_featured` (featuring is an admin curation action).
+        # A full PUT would apply the model default and silently un-feature the
+        # product on the farmer's very next edit, so the update has to be
+        # partial — this pins that behaviour to the API contract.
+        self.published.is_featured = True
+        self.published.save()
+
+        client = self.client_for(self.farmer)
+        response = client.patch(
+            f"/api/v1/products/{self.published.id}/",
+            {"stock": 12},
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.published.refresh_from_db()
+        self.assertEqual(self.published.stock, 12)
+        self.assertTrue(self.published.is_featured)
+

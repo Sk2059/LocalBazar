@@ -3,6 +3,125 @@ from rest_framework import serializers
 from .models import BuyerProfile, FarmerProfile
 
 
+class PublicFarmerSerializer(serializers.ModelSerializer):
+    """A farm as shoppers see it in the marketplace's "Meet the farmers" pages.
+
+    The profile model itself is thin — a farm's public presence is mostly the
+    catalogue it sells — so the catalogue is denormalised here: the product
+    count, the average rating across active listings, the distinct categories
+    and farming methods, and how many orders ever carried a line from this
+    farm. Everything is annotated/prefetched by the view so the list renders
+    in a couple of queries instead of one per card.
+    """
+
+    # Farmers are identified by their account id everywhere else in the API —
+    # `product.farmer`, `order_item.farmer` — so the public endpoints are keyed
+    # on it too. That keeps `/farmers/<id>/` links consistent whether they come
+    # from a product card or the directory.
+    id = serializers.IntegerField(
+        source="user_id",
+        read_only=True,
+    )
+
+    farmer_name = serializers.CharField(
+        source="user.name",
+        read_only=True,
+    )
+
+    profile_picture = serializers.ImageField(
+        source="user.profile_picture",
+        read_only=True,
+        allow_null=True,
+    )
+
+    location = serializers.SerializerMethodField()
+
+    verified = serializers.SerializerMethodField()
+
+    joined = serializers.SerializerMethodField()
+
+    product_count = serializers.IntegerField(
+        read_only=True,
+    )
+
+    avg_rating = serializers.FloatField(
+        read_only=True,
+    )
+
+    orders_count = serializers.IntegerField(
+        read_only=True,
+    )
+
+    categories = serializers.SerializerMethodField()
+
+    farming_methods = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FarmerProfile
+
+        fields = (
+            "id",
+            "farmer_name",
+            "farm_name",
+            "description",
+            "municipality",
+            "district",
+            "province",
+            "location",
+            "farm_image",
+            "profile_picture",
+            "verified",
+            "joined",
+            "product_count",
+            "avg_rating",
+            "orders_count",
+            "categories",
+            "farming_methods",
+            "created_at",
+        )
+
+        read_only_fields = fields
+
+    def get_location(self, obj):
+        """`municipality, district` — the same string the product cards show."""
+        return ", ".join(
+            value
+            for value in (obj.municipality, obj.district)
+            if value
+        )
+
+    def get_verified(self, obj):
+        return obj.verification_status == FarmerProfile.VerificationStatus.VERIFIED
+
+    def get_joined(self, obj):
+        """The year the farm joined, shown as "Member since" on the detail page."""
+        return str(obj.created_at.year)
+
+    def _active_products(self, obj):
+        """The view prefetches active listings onto the user as `active_products`."""
+        return getattr(obj.user, "active_products", None) or []
+
+    def get_categories(self, obj):
+        categories = []
+
+        for product in self._active_products(obj):
+            name = getattr(product.category, "name", None)
+
+            if name and name not in categories:
+                categories.append(name)
+
+        return categories
+
+    def get_farming_methods(self, obj):
+        methods = []
+
+        for product in self._active_products(obj):
+            if product.farming_method and product.farming_method not in methods:
+                methods.append(product.farming_method)
+
+        return methods
+
+
 class FarmerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:

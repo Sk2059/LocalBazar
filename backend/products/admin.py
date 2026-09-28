@@ -38,7 +38,17 @@ class ProductAdmin(admin.ModelAdmin):
         "farming_method",
         "is_active",
         "is_featured",
-        "rating",
+    )
+
+    # Curation flags are editable straight from the changelist so featuring a
+    # product is one click instead of a full change-form round trip. `name`
+    # stays the link into the detail form, and Django refuses editable fields
+    # that are also links, so it's declared explicitly.
+    list_display_links = ("name",)
+
+    list_editable = (
+        "is_active",
+        "is_featured",
     )
 
     list_filter = (

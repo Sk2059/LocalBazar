@@ -10,18 +10,22 @@ import {
   createAdminDeliveryZone,
   deleteAdminCategory,
   deleteAdminDeliveryZone,
+  deleteAdminProduct,
   getAdminCategories,
   getAdminDeliveryZones,
   getAdminFarmers,
   getAdminOrders,
+  getAdminProducts,
   getAdminStats,
   getAdminUsers,
   rejectFarmer,
   updateAdminCategory,
   updateAdminDeliveryZone,
+  updateAdminProduct,
   updateAdminUser,
   updateOrderStatus,
   type AdminDeliveryZonePayload,
+  type AdminProductUpdatePayload,
   type AdminUserUpdatePayload,
   type OrderStatusUpdate,
   type VerificationStatus,
@@ -42,6 +46,7 @@ const KEYS = {
   orders: ["admin-orders"],
   categories: ["admin-categories"],
   deliveryZones: ["admin-delivery-zones"],
+  products: ["admin-products"],
 } as const;
 
 /** The public zone list the checkout page estimates delivery fees from. */
@@ -131,6 +136,47 @@ export function useUpdateOrderStatus() {
     }) => updateOrderStatus(orderId, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: KEYS.orders });
+      void queryClient.invalidateQueries({ queryKey: KEYS.stats });
+    },
+  });
+}
+
+// ── Products ─────────────────────────────────────────────────────────────────
+
+export function useAdminProducts() {
+  return useQuery({
+    queryKey: KEYS.products,
+    queryFn: getAdminProducts,
+  });
+}
+
+export function useUpdateAdminProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      productId,
+      payload,
+    }: {
+      productId: number;
+      payload: AdminProductUpdatePayload;
+    }) => updateAdminProduct(productId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: KEYS.products });
+      // Featuring a product moves the homepage's "Fresh today" row, and the
+      // stats card counts active products, so both are refreshed.
+      void queryClient.invalidateQueries({ queryKey: KEYS.stats });
+    },
+  });
+}
+
+export function useDeleteAdminProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (productId: number) => deleteAdminProduct(productId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: KEYS.products });
       void queryClient.invalidateQueries({ queryKey: KEYS.stats });
     },
   });

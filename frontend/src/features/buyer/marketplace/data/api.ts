@@ -52,7 +52,9 @@ export interface ProductQuery {
   search?: string;
   category?: string;
   farming_method?: ProductApi["farming_method"];
+  farmer?: number;
   is_seasonal?: boolean;
+  is_featured?: boolean;
   min_price?: number;
   max_price?: number;
   min_stock?: number;

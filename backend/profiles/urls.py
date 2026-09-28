@@ -8,10 +8,27 @@ from .views import (
     FarmerProfileView,
     FarmerVerificationSubmitView,
     FarmerVerificationView,
+    PublicFarmerDetailView,
+    PublicFarmerListView,
 )
 
 
 urlpatterns = [
+    # --- Public (no auth) -----------------------------------------------------
+    # The marketplace's "Meet the farmers" directory and farm profiles.
+    path(
+        "farmers/",
+        PublicFarmerListView.as_view(),
+        name="public-farmer-list",
+    ),
+
+    path(
+        "farmers/<int:pk>/",
+        PublicFarmerDetailView.as_view(),
+        name="public-farmer-detail",
+    ),
+
+    # --- Farmer (own profile) -------------------------------------------------
     path(
         "farmer/",
         FarmerProfileView.as_view(),

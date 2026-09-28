@@ -1,113 +1,77 @@
 import {
   ArrowRight,
-  Heart,
   MapPin,
-  Plus,
   ShoppingCart,
-  Star,
   Truck,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Container from "../../../../components/common/Container";
-import { useCart } from "../../../../context/CartContext";
-import { products as marketplaceProducts } from "../../marketplace/data/products";
 
-type Product = {
-  id: number;
-  name: string;
-  farmer: string;
-  location: string;
-  pricePerKg: number;
-  bulkPrice: number;
-  unit: string;
-  rating: number;
-  reviews: number;
-  image: string;
-  freshness: string;
-  category: string;
-  stock: string;
-};
+import MarketplaceProductCard from "../../marketplace/components/MarketplaceProductCard";
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Fresh Tomatoes",
-    farmer: "Hari Organic Farm",
-    location: "Biratnagar, Morang",
-    pricePerKg: 95,
-    bulkPrice: 85,
-    unit: "kg",
-    rating: 4.9,
-    reviews: 28,
-    image: "/images/products/tomatoes.jpeg",
-    freshness: "Harvested today",
-    category: "Vegetables",
-    stock: "In stock",
-  },
-  {
-    id: 2,
-    name: "Fresh Cauliflower",
-    farmer: "Koshi Green Farm",
-    location: "Itahari, Sunsari",
-    pricePerKg: 80,
-    bulkPrice: 72,
-    unit: "kg",
-    rating: 4.8,
-    reviews: 21,
-    image: "/images/products/cauliflower.png",
-    freshness: "Harvested today",
-    category: "Vegetables",
-    stock: "In stock",
-  },
-  {
-    id: 3,
-    name: "Local Mangoes",
-    farmer: "Madhesh Fruit Farm",
-    location: "Dharan, Sunsari",
-    pricePerKg: 180,
-    bulkPrice: 162,
-    unit: "kg",
-    rating: 4.9,
-    reviews: 35,
-    image: "/images/products/mangoes.png",
-    freshness: "Fresh harvest",
-    category: "Fruits",
-    stock: "In stock",
-  },
-  {
-    id: 4,
-    name: "Fresh Potatoes",
-    farmer: "Green Valley Farm",
-    location: "Birat Chowk, Morang",
-    pricePerKg: 70,
-    bulkPrice: 63,
-    unit: "kg",
-    rating: 4.7,
-    reviews: 19,
-    image: "/images/products/potatoes.png",
-    freshness: "Fresh harvest",
-    category: "Vegetables",
-    stock: "In stock",
-  },
-];
+import type { Product } from "../../marketplace/data/products";
 
-export default function FreshProducts() {
-  const [wishlist, setWishlist] = useState<number[]>([]);
+import { toMarketplaceProduct } from "../../marketplace/data/adaptProduct";
 
-  const toggleWishlist = (id: number) => {
-    setWishlist((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
-    );
-  };
+import { getProducts } from "../../marketplace/data/api";
+
+export default function FeaturedProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadFeaturedProducts() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await getProducts({
+          page: 1,
+          page_size: 8,
+          is_featured: true,
+          ordering: "-created_at",
+        });
+
+        if (!mounted) return;
+
+        const mappedProducts = response.results.map(
+          toMarketplaceProduct,
+        );
+
+        setProducts(mappedProducts.slice(0, 8));
+      } catch (err) {
+        console.error(
+          "Failed to load featured products:",
+          err,
+        );
+
+        if (mounted) {
+          setError(
+            "Unable to load fresh products right now.",
+          );
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadFeaturedProducts();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-24 lg:py-28">
-   
-
+      {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -right-48 top-10 size-112.5 rounded-full bg-[#EEF5EA] blur-3xl" />
 
@@ -115,12 +79,12 @@ export default function FreshProducts() {
       </div>
 
       <Container className="relative">
-      
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            
-
             <div className="mb-4 flex items-center gap-2">
               <span className="h-px w-7 bg-[#D5A82E]" />
 
@@ -157,6 +121,7 @@ export default function FreshProducts() {
             </p>
           </div>
 
+          {/* View all */}
           <Link
             to="/marketplace"
             className="
@@ -190,284 +155,272 @@ export default function FreshProducts() {
           </Link>
         </div>
 
+        {/* =====================================================
+            PRODUCTS
+        ===================================================== */}
 
-        <div
-          className="
-            mt-10
-            grid
-            gap-5
+        {loading ? (
+          <FeaturedProductsSkeleton />
+        ) : error ? (
+          <FeaturedProductsError />
+        ) : products.length === 0 ? (
+          <FeaturedProductsEmpty />
+        ) : (
+          <div
+            className="
+              mt-10
+              grid
+              gap-5
 
-            sm:grid-cols-2
+              sm:grid-cols-2
 
-            lg:mt-12
-            lg:grid-cols-4
-          "
-        >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              wishlisted={wishlist.includes(product.id)}
-              onWishlist={() =>
-                toggleWishlist(product.id)
-              }
+              lg:mt-12
+              lg:grid-cols-4
+            "
+          >
+            {products.slice(0, 8).map((product) => (
+              <MarketplaceProductCard
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* =====================================================
+            TRUST STRIP
+        ===================================================== */}
+
+        {!loading && !error && products.length > 0 && (
+          <div
+            className="
+              mt-10
+              grid
+              gap-px
+              overflow-hidden
+              rounded-2xl
+              border
+              border-[#E0E7DC]
+              bg-[#E0E7DC]
+
+              sm:grid-cols-3
+            "
+          >
+            <InfoItem
+              icon={<Truck size={18} />}
+              title="Fresh delivery"
+              description="From local farms to your door"
             />
-          ))}
-        </div>
 
+            <InfoItem
+              icon={<MapPin size={18} />}
+              title="Local farmers"
+              description="Know exactly where your food comes from"
+            />
 
-        <div
-          className="
-            mt-10
-            grid
-            gap-px
-            overflow-hidden
-            rounded-2xl
-            border
-            border-[#E0E7DC]
-            bg-[#E0E7DC]
-
-            sm:grid-cols-3
-          "
-        >
-          <InfoItem
-            icon={<Truck size={18} />}
-            title="Fresh delivery"
-            description="From local farms to your door"
-          />
-
-          <InfoItem
-            icon={<MapPin size={18} />}
-            title="Local farmers"
-            description="Know exactly where your food comes from"
-          />
-
-          <InfoItem
-            icon={<ShoppingCart size={18} />}
-            title="Easy shopping"
-            description="Simple, secure and convenient checkout"
-          />
-        </div>
+            <InfoItem
+              icon={<ShoppingCart size={18} />}
+              title="Easy shopping"
+              description="Simple, secure and convenient checkout"
+            />
+          </div>
+        )}
       </Container>
     </section>
   );
 }
 
+/* ============================================================
+   LOADING SKELETON
+============================================================ */
 
-
-function ProductCard({
-  product,
-  wishlisted,
-  onWishlist,
-}: {
-  product: Product;
-  wishlisted: boolean;
-  onWishlist: () => void;
-}) {
-  const { addToCart } = useCart();
-
+function FeaturedProductsSkeleton() {
   return (
-    <article
+    <div
       className="
-        group
-        overflow-hidden
+        mt-10
+        grid
+        gap-5
+
+        sm:grid-cols-2
+
+        lg:mt-12
+        lg:grid-cols-4
+      "
+    >
+      {Array.from({ length: 8 }).map((_, index) => (
+        <div
+          key={index}
+          className="
+            overflow-hidden
+            rounded-[22px]
+            border
+            border-[#E6E4DE]
+            bg-white
+            shadow-[0_8px_28px_rgba(35,55,35,0.045)]
+          "
+        >
+          {/* Image */}
+          <div className="aspect-[1.05] animate-pulse bg-[#EFF4EB]" />
+
+          {/* Content */}
+          <div className="space-y-3 p-4">
+            <div className="h-4 w-3/4 animate-pulse rounded bg-[#E6EBE2]" />
+
+            <div className="h-3 w-1/2 animate-pulse rounded bg-[#EEF1EB]" />
+
+            <div className="my-3 border-t border-[#EEECE6]" />
+
+            <div className="flex items-end justify-between">
+              <div className="space-y-2">
+                <div className="h-2 w-14 animate-pulse rounded bg-[#EEF1EB]" />
+
+                <div className="h-5 w-20 animate-pulse rounded bg-[#E6EBE2]" />
+              </div>
+
+              <div className="size-10 animate-pulse rounded-xl bg-[#E6EBE2]" />
+            </div>
+
+            <div className="h-3 w-24 animate-pulse rounded bg-[#EEF1EB]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   ERROR STATE
+============================================================ */
+
+function FeaturedProductsError() {
+  return (
+    <div
+      className="
+        mt-10
         rounded-[22px]
         border
         border-[#E6E4DE]
         bg-white
-        shadow-[0_8px_28px_rgba(35,55,35,0.045)]
-        transition-all
-        duration-300
-
-        hover:-translate-y-1
-        hover:border-[#D2DFCD]
-        hover:shadow-[0_18px_45px_rgba(35,65,35,0.10)]
+        px-6
+        py-12
+        text-center
+        shadow-sm
       "
     >
- 
-
-      <div className="relative aspect-[1.05] overflow-hidden bg-[#EFF4EB]">
-        <img
-          src={product.image}
-          alt={product.name}
-          loading="lazy"
-          className="
-            h-full
-            w-full
-            object-cover
-            transition-transform
-            duration-700
-
-            group-hover:scale-105
-          "
-        />
-
-        {/* Image gradient */}
-
-        <div className="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
-
-        {/* Freshness */}
-
-        <span
-          className="
-            absolute
-            left-3
-            top-3
-            rounded-full
-            border
-            border-white/60
-            bg-white/90
-            px-2.5
-            py-1.5
-            text-[9px]
-            font-extrabold
-            text-[#316934]
-            shadow-sm
-            backdrop-blur-md
-          "
-        >
-          {product.freshness}
-        </span>
-
-        {/* Wishlist */}
-
-        <button
-          type="button"
-          aria-label={`Add ${product.name} to wishlist`}
-          onClick={onWishlist}
-          className="
-            absolute
-            right-3
-            top-3
-            grid
-            size-9
-            place-items-center
-            rounded-full
-            border
-            border-white/60
-            bg-white/90
-            text-[#555951]
-            shadow-sm
-            backdrop-blur-md
-            transition-all
-
-            hover:bg-white
-            hover:text-[#B84C43]
-          "
-        >
-          <Heart
-            size={16}
-            fill={wishlisted ? "currentColor" : "none"}
-            className={
-              wishlisted
-                ? "text-[#B84C43]"
-                : ""
-            }
-          />
-        </button>
-
-        <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3 text-white">
-          <div className="min-w-0">
-            <p className="truncate text-[11px] font-extrabold drop-shadow-md">
-              {product.farmer}
-            </p>
-            <span className="mt-1 inline-flex rounded-full bg-black/25 px-2.5 py-1 text-[9px] font-bold backdrop-blur-md">
-              {product.category}
-            </span>
-          </div>
-        </div>
+      <div
+        className="
+          mx-auto
+          grid
+          size-12
+          place-items-center
+          rounded-full
+          bg-[#F3F8F1]
+          text-[#316934]
+        "
+      >
+        <ShoppingCart size={20} />
       </div>
 
+      <h3 className="mt-4 text-sm font-bold text-[#182719]">
+        Products unavailable
+      </h3>
 
+      <p className="mt-1 text-xs text-[#7B8178]">
+        Unable to load featured products right now.
+      </p>
 
-      <div className="p-4">
-        {/* Product name */}
+      <Link
+        to="/marketplace"
+        className="
+          mt-5
+          inline-flex
+          items-center
+          gap-2
+          rounded-xl
+          bg-[#2F6633]
+          px-4
+          py-2.5
+          text-xs
+          font-bold
+          text-white
+          transition
+          hover:bg-[#25572A]
+        "
+      >
+        Browse marketplace
 
-        <Link
-          to={`/marketplace/product/${product.name.toLowerCase().replace(/ /g, "-")}`}
-          className="block"
-        >
-          <h3 className="text-[15px] font-extrabold leading-tight text-[#202A21] transition-colors group-hover:text-[#316934]">
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="mt-1 flex items-center gap-1 text-[9px] text-[#969791]">
-            <MapPin size={10} />
-            {product.location}
-        </div>
-
-        {/* Divider */}
-
-        <div className="my-3 border-t border-[#EEECE6]" />
-
-        {/* Price + Add */}
-
-        <div className="flex items-end justify-between gap-2">
-          <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
-            <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#92938D]">Regular</p>
-              <p className="mt-0.5 whitespace-nowrap text-[17px] font-black tracking-tight text-[#234A27]">
-                Rs. {product.pricePerKg}<span className="ml-0.5 text-[9px] font-semibold text-[#92938D]">/kg</span>
-              </p>
-            </div>
-            <div className="border-l border-[#EEECE6] pl-2">
-              <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-forest-700">Bulk</p>
-              <p className="mt-0.5 whitespace-nowrap text-[14px] font-extrabold text-forest-700">
-                Rs. {product.bulkPrice}<span className="ml-0.5 text-[9px] font-semibold">/kg</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                const marketplaceProduct = marketplaceProducts.find((item) => item.id === product.id);
-                if (marketplaceProduct) addToCart(marketplaceProduct);
-              }}
-              className="
-              grid
-              size-10
-              shrink-0
-              place-items-center
-              rounded-xl
-              bg-[#2F6633]
-              text-white
-              shadow-[0_7px_16px_rgba(47,102,51,0.18)]
-              transition-all
-
-              hover:bg-[#25572A]
-              hover:shadow-[0_9px_20px_rgba(47,102,51,0.25)]
-
-              active:scale-95
-            "
-                aria-label={`Add ${product.name} to cart`}
-            >
-              <Plus size={18} />
-            </button>
-
-            <div className="flex items-center gap-0.5 text-[#D69B18]" aria-label={`${product.rating} out of 5 stars`}>
-              <Star size={12} fill="currentColor" />
-              <span className="text-[10px] font-extrabold text-[#4D514B]">{product.rating}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Stock */}
-
-        <div className="mt-3 flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-[#5E9A58]" />
-
-          <span className="text-[9px] font-bold text-[#6E756B]">
-            {product.stock}
-          </span>
-        </div>
-      </div>
-    </article>
+        <ArrowRight size={14} />
+      </Link>
+    </div>
   );
 }
 
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+function FeaturedProductsEmpty() {
+  return (
+    <div
+      className="
+        mt-10
+        rounded-[22px]
+        border
+        border-[#E6E4DE]
+        bg-white
+        px-6
+        py-12
+        text-center
+        shadow-sm
+      "
+    >
+      <div
+        className="
+          mx-auto
+          grid
+          size-12
+          place-items-center
+          rounded-full
+          bg-[#F3F8F1]
+          text-[#316934]
+        "
+      >
+        <MapPin size={20} />
+      </div>
+
+      <h3 className="mt-4 text-sm font-bold text-[#182719]">
+        Fresh products are coming soon
+      </h3>
+
+      <p className="mt-1 text-xs text-[#7B8178]">
+        Check the marketplace for available produce.
+      </p>
+
+      <Link
+        to="/marketplace"
+        className="
+          mt-5
+          inline-flex
+          items-center
+          gap-2
+          text-xs
+          font-bold
+          text-[#316934]
+          hover:underline
+        "
+      >
+        Explore marketplace
+
+        <ArrowRight size={14} />
+      </Link>
+    </div>
+  );
+}
+
+/* ============================================================
+   INFO ITEM
+============================================================ */
 
 function InfoItem({
   icon,

@@ -218,12 +218,19 @@ export function createFarmerProduct(
     .then((response) => response.data);
 }
 
+/**
+ * A *partial* update on purpose. The dialogue rebuilds the whole form, but the
+ * curation flags (`is_featured`) are deliberately never part of it — featuring
+ * is an admin decision, not the farmer's. A full `PUT` would apply the model
+ * defaults for every field the form omits and silently un-feature the product;
+ * `PATCH` leaves everything unsent exactly as it was.
+ */
 export function updateFarmerProduct(
   productId: number,
   payload: FormData,
 ): Promise<FarmerProductApi> {
   return apiClient
-    .put<FarmerProductApi>(`/products/${productId}/`, payload, {
+    .patch<FarmerProductApi>(`/products/${productId}/`, payload, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((response) => response.data);

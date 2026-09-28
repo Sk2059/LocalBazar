@@ -9,155 +9,43 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
-import { products } from "../marketplace/data/products";
-
-interface Farmer {
-  id: number;
-  name: string;
-  farmName: string;
-  location: string;
-  image: string;
-  farmImage: string;
-  rating: number;
-  reviews: number;
-  products: number;
-  farmingType: "Organic" | "Natural" | "Sustainable";
-  story: string;
-  joined: string;
-  verified: boolean;
-  categories: string[];
-}
-
-/*
-|--------------------------------------------------------------------------
-| Farmer data
-|--------------------------------------------------------------------------
-*/
-
-const farmers: Farmer[] = [
-  {
-    id: 1,
-    name: "Ramesh Kumar",
-    farmName: "Hari Organic Farm",
-    location: "Biratnagar, Morang",
-    image: "/images/farmers/ramesh.png",
-    farmImage: "/images/farmers/rameshfarm.png",
-    rating: 4.9,
-    reviews: 46,
-    products: 18,
-    farmingType: "Organic",
-    story:
-      "Growing fresh vegetables with traditional farming practices while caring for the soil and producing healthy food for local families.",
-    joined: "2021",
-    verified: true,
-    categories: ["Vegetables", "Leafy Greens"],
-  },
-
-  {
-    id: 2,
-    name: "Mina Rai",
-    farmName: "Koshi Green Farm",
-    location: "Itahari, Sunsari",
-    image: "/images/farmers/mina.png",
-    farmImage: "/images/farmers/mina-farm.png",
-    rating: 4.8,
-    reviews: 38,
-    products: 14,
-    farmingType: "Natural",
-    story:
-      "A family-run farm focused on seasonal vegetables and naturally grown produce for families across Koshi Province.",
-    joined: "2022",
-    verified: true,
-    categories: ["Vegetables", "Fruits"],
-  },
-
-  {
-    id: 3,
-    name: "Dilip Chaudhary",
-    farmName: "Green Valley Farm",
-    location: "Birat Chowk, Morang",
-    image: "/images/farmers/dilip.png",
-    farmImage: "/images/farmers/dilip-farm.png",
-    rating: 4.9,
-    reviews: 52,
-    products: 22,
-    farmingType: "Sustainable",
-    story:
-      "Providing naturally grown seasonal produce while maintaining sustainable farming practices and supporting local agriculture.",
-    joined: "2020",
-    verified: true,
-    categories: ["Grains & Pulses", "Seasonal"],
-  },
-
-  {
-    id: 4,
-    name: "Sunita Thapa",
-    farmName: "Sunita's Garden",
-    location: "Dharan, Sunsari",
-    image: "/images/farmers/ramesh.png",
-    farmImage: "/images/farmers/rameshfarm.png",
-    rating: 4.7,
-    reviews: 29,
-    products: 11,
-    farmingType: "Organic",
-    story:
-      "Dedicated to growing fresh produce using careful organic farming practices for local families.",
-    joined: "2023",
-    verified: false,
-    categories: ["Fruits", "Leafy Greens"],
-  },
-
-  {
-    id: 5,
-    name: "Bishnu Prasad",
-    farmName: "Madhesh Fruit Farm",
-    location: "Rajbiraj, Saptari",
-    image: "/images/farmers/dilip.png",
-    farmImage: "/images/farmers/dilip-farm.png",
-    rating: 4.6,
-    reviews: 33,
-    products: 16,
-    farmingType: "Natural",
-    story:
-      "Growing seasonal fruits and naturally produced crops from the fertile Terai region.",
-    joined: "2021",
-    verified: true,
-    categories: ["Fruits", "Seasonal"],
-  },
-
-  {
-    id: 6,
-    name: "Kamala Gurung",
-    farmName: "Hill Fresh Farm",
-    location: "Dhankuta, Koshi",
-    image: "/images/farmers/mina.png",
-    farmImage: "/images/farmers/mina-farm.png",
-    rating: 4.8,
-    reviews: 41,
-    products: 19,
-    farmingType: "Organic",
-    story:
-      "Growing fresh hill produce using organic methods and bringing nutritious food from Dhankuta to local markets.",
-    joined: "2022",
-    verified: true,
-    categories: ["Vegetables", "Grains & Pulses"],
-  },
-];
+import { useFarmer, useFarmerProducts } from "./data/hooks";
+import { toMarketplaceProduct } from "../marketplace/data/adaptProduct";
 
 export default function FarmerDetail() {
   const { farmerId } = useParams<{ farmerId: string }>();
 
-  const farmer = farmers.find(
-    (item) => item.id === Number(farmerId),
+  const farmerIdNumber = Number(farmerId);
+
+  const { data: farmer, isLoading, isError } = useFarmer(farmerIdNumber);
+
+  const { data: farmerProductsData } = useFarmerProducts(farmerIdNumber);
+
+  const farmerProducts = (farmerProductsData?.results ?? []).map(
+    toMarketplaceProduct,
   );
 
   /*
   |--------------------------------------------------------------------------
-  | Farmer not found
+  | Loading / failed to load / not found
   |--------------------------------------------------------------------------
   */
 
-  if (!farmer) {
+  if (isLoading) {
+    return (
+      <main className="flex min-h-[70vh] items-center justify-center bg-[#FCFBF7] px-4">
+        <div className="text-center">
+          <div className="mx-auto size-10 animate-spin rounded-full border-4 border-[#E2E7DE] border-t-forest-700" />
+
+          <p className="mt-5 text-sm font-semibold text-[#707A6E]">
+            Loading farm…
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError || !farmer) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center bg-[#FCFBF7] px-4">
         <div className="text-center">
@@ -169,11 +57,13 @@ export default function FarmerDetail() {
           </div>
 
           <h1 className="mt-5 text-2xl font-extrabold text-[#173615]">
-            Farmer not found
+            {isError ? "Couldn't load this farm" : "Farmer not found"}
           </h1>
 
           <p className="mt-2 text-sm text-[#707A6E]">
-            The farmer you're looking for doesn't exist.
+            {isError
+              ? "Something went wrong reaching this farm. Please try again."
+              : "The farmer you're looking for doesn't exist."}
           </p>
 
           <Link
@@ -196,16 +86,6 @@ export default function FarmerDetail() {
       </main>
     );
   }
-
-  /*
-  |--------------------------------------------------------------------------
-  | Get products belonging to this farmer
-  |--------------------------------------------------------------------------
-  */
-
-  const farmerProducts = products.filter(
-    (product) => product.farmer.id === farmer.id,
-  );
 
   return (
     <main className="min-h-screen bg-[#FCFBF7]">
@@ -356,7 +236,7 @@ export default function FarmerDetail() {
                     {farmer.rating}
                   </strong>
 
-                  ({farmer.reviews} reviews)
+                  ({farmer.orders} orders)
                 </span>
 
               </div>
@@ -389,8 +269,8 @@ export default function FarmerDetail() {
           />
 
           <Stat
-            label="Reviews"
-            value={String(farmer.reviews)}
+            label="Orders"
+            value={String(farmer.orders)}
           />
 
           <Stat

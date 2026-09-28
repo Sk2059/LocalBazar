@@ -10,7 +10,6 @@ import {
   Pencil,
   Phone,
   Plus,
-  Settings,
   ShoppingBag,
   Sprout,
   Store,
@@ -796,7 +795,7 @@ function DashboardOverview({
       </div>
 
       {/* Platform Dual-Role Card */}
-      <div className="rounded-3xl border border-forest-100 bg-gradient-to-r from-forest-50/80 via-white to-white p-6 shadow-2xs">
+      <div className="rounded-3xl border border-forest-100 bg-linear-to-r from-forest-50/80 via-white to-white p-6 shadow-2xs">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-forest-700 text-white shadow-2xs">
