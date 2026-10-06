@@ -125,9 +125,6 @@ local-farmers-marketplace/
 ---
 
 ## Contributor
-
-**Sabinam Mahato** (80011857),
-*prishila shrestha*,
-*Abhishek karna*
+*sabinam mahato (sk) 🦚🥀*
 ---
 ## B.Sc. CSIT, Birat Multiple College, Biratnagar — Tribhuvan University
